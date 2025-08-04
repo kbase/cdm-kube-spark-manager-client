@@ -18,5 +18,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["spark_manager_client"]
-package-dir = {"" = "src"}
+packages = { find = { where = ["src"] } }
