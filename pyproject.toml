@@ -1,22 +1,22 @@
-#[build-system]
-#requires = ["setuptools>=61.0"]
-#build-backend = "setuptools.build_meta"
-#
-#[project]
-## The name of your new pip-installable client package
-#name = "cdm-spark-manager-client"
-#version = "0.1.0"
-#description = "A Python client for the KBase CDM Spark Manager API"
-#readme = "README.md"
-#requires-python = ">=3.8"
-#license = { text = "MIT" }
-#
-## Runtime dependencies required by the generated client
-#dependencies = [
-#    "httpx >= 0.23.0",
-#    "pydantic >= 2.0.0, < 3.0.0",
-#]
-#
-#[tool.setuptools]
-#packages = ["spark_manager_client"]
-#package-dir = {"" = "src"}
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# The name of your new pip-installable client package
+name = "cdm-spark-manager-client"
+version = "0.0.1"
+description = "A Python client for the KBase CDM Spark Manager API"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+
+# Runtime dependencies required by the generated client
+dependencies = [
+    "httpx >= 0.23.0",
+    "pydantic >= 2.0.0, < 3.0.0",
+]
+
+[tool.setuptools]
+packages = ["spark_manager_client"]
+package-dir = {"" = "src"}
