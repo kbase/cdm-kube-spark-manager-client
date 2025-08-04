@@ -1,0 +1,498 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CDM Spark Cluster Manager API",
+    "description": "API for managing Spark clusters in Kubernetes",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/clusters": {
+      "get": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Get cluster status",
+        "description": "Retrieves the status of the Spark cluster for the authenticated user. Important: Even with a successful API call (HTTP 200), check the 'error' field in the response to determine if there are issues with the cluster deployments.",
+        "operationId": "get_cluster_status_clusters_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkClusterStatus"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "KBaseHTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Create a new Spark cluster",
+        "description": "Creates a new Spark cluster for the authenticated user with the specified configuration.",
+        "operationId": "create_cluster_clusters_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SparkClusterConfig"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SparkClusterCreateResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "KBaseHTTPBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "clusters"
+        ],
+        "summary": "Delete a Spark cluster",
+        "description": "Deletes a specific Spark cluster for the authenticated user.",
+        "operationId": "delete_cluster_clusters_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClusterDeleteResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "KBaseHTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health check",
+        "description": "Returns the health status of the API.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClusterDeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Success deletion message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ClusterDeleteResponse",
+        "description": "Response model for cluster deletion."
+      },
+      "DeploymentStatus": {
+        "properties": {
+          "available_replicas": {
+            "type": "integer",
+            "title": "Available Replicas",
+            "description": "Number of available replicas",
+            "default": 0
+          },
+          "ready_replicas": {
+            "type": "integer",
+            "title": "Ready Replicas",
+            "description": "Number of ready replicas",
+            "default": 0
+          },
+          "replicas": {
+            "type": "integer",
+            "title": "Replicas",
+            "description": "Total number of desired replicas",
+            "default": 0
+          },
+          "unavailable_replicas": {
+            "type": "integer",
+            "title": "Unavailable Replicas",
+            "description": "Number of unavailable replicas",
+            "default": 0
+          },
+          "is_ready": {
+            "type": "boolean",
+            "title": "Is Ready",
+            "description": "Whether all replicas are ready",
+            "default": false
+          },
+          "exists": {
+            "type": "boolean",
+            "title": "Exists",
+            "description": "Whether the deployment exists",
+            "default": true
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "Error message if any"
+          }
+        },
+        "type": "object",
+        "title": "DeploymentStatus",
+        "description": "Status information of a Kubernetes deployment."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "Error code"
+          },
+          "error_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Type",
+            "description": "Error type"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message",
+            "description": "Error message"
+          }
+        },
+        "type": "object",
+        "title": "ErrorResponse",
+        "description": "Standard error response model."
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Health status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse",
+        "description": "Health check response model."
+      },
+      "SparkClusterConfig": {
+        "properties": {
+          "worker_count": {
+            "type": "integer",
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Worker Count",
+            "description": "Number of worker nodes in the Spark cluster (Range: 1 to 25).",
+            "default": 4,
+            "examples": [
+              4,
+              10
+            ]
+          },
+          "worker_cores": {
+            "type": "integer",
+            "maximum": 64.0,
+            "minimum": 1.0,
+            "title": "Worker Cores",
+            "description": "Number of CPU cores allocated to each worker node (Range: 1 to 64).",
+            "default": 1,
+            "examples": [
+              1,
+              16
+            ]
+          },
+          "worker_memory": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?"
+              },
+              {
+                "type": "integer",
+                "minimum": 0.0
+              }
+            ],
+            "title": "Worker Memory",
+            "description": "Memory allocated per worker node (Range: 102.4 MiB to 256 GiB). Accepts formats like '10GiB', '10240MiB'.",
+            "default": "50GiB",
+            "examples": [
+              "50GiB",
+              "32GiB"
+            ],
+            "ge": 107374182,
+            "le": 274877906944
+          },
+          "master_cores": {
+            "type": "integer",
+            "maximum": 64.0,
+            "minimum": 1.0,
+            "title": "Master Cores",
+            "description": "Number of CPU cores allocated to the master node (Range: 1 to 64).",
+            "default": 1,
+            "examples": [
+              1,
+              8
+            ]
+          },
+          "master_memory": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\s*(\\d*\\.?\\d+)\\s*(\\w+)?"
+              },
+              {
+                "type": "integer",
+                "minimum": 0.0
+              }
+            ],
+            "title": "Master Memory",
+            "description": "Memory allocated for the master node (Range: 102.4 MiB to 256 GiB). Accepts formats like '10GiB', '10240MiB'.",
+            "default": "50GiB",
+            "examples": [
+              "50GiB",
+              "16GiB"
+            ],
+            "ge": 107374182,
+            "le": 274877906944
+          }
+        },
+        "type": "object",
+        "title": "SparkClusterConfig",
+        "description": "Configuration for creating a new Spark cluster."
+      },
+      "SparkClusterCreateResponse": {
+        "properties": {
+          "cluster_id": {
+            "type": "string",
+            "title": "Cluster Id",
+            "description": "Unique identifier for the cluster"
+          },
+          "master_url": {
+            "type": "string",
+            "title": "Master Url",
+            "description": "URL to connect to the Spark master"
+          },
+          "master_ui_url": {
+            "type": "string",
+            "title": "Master Ui Url",
+            "description": "URL to access the Spark master UI"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cluster_id",
+          "master_url",
+          "master_ui_url"
+        ],
+        "title": "SparkClusterCreateResponse",
+        "description": "Response model for cluster creation."
+      },
+      "SparkClusterStatus": {
+        "properties": {
+          "master": {
+            "$ref": "#/components/schemas/DeploymentStatus",
+            "description": "Master node status"
+          },
+          "workers": {
+            "$ref": "#/components/schemas/DeploymentStatus",
+            "description": "Worker nodes status"
+          },
+          "master_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Url",
+            "description": "Spark master URL"
+          },
+          "master_ui_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Ui Url",
+            "description": "Spark master UI URL"
+          },
+          "error": {
+            "type": "boolean",
+            "title": "Error",
+            "description": "Whether there was an error during the status check",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "master",
+          "workers"
+        ],
+        "title": "SparkClusterStatus",
+        "description": "Status information about a Spark cluster."
+      }
+    },
+    "securitySchemes": {
+      "KBaseHTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
