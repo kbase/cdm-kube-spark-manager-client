@@ -1,6 +1,6 @@
 # Spark Manager Client
 
-A pip-installable Python client for the `cdm-kube-spark-manager` API.
+A pip-installable Python client for the [cdm-kube-spark-manager](https://github.com/kbase/cdm-kube-spark-manager) API.
 
 ## Overview
 
